@@ -73,11 +73,7 @@ const List<Destination> destinations = [
   ),
 ];
 
-// =============================================================================
-// HOME PAGE
-// =============================================================================
-// StatefulWidget because we own a CarouselController (it must be created once
-// and disposed, exactly like a ScrollController or PageController).
+
 class MyHomePage extends StatefulWidget {
   final String title;
   const MyHomePage({super.key, required this.title});
@@ -87,7 +83,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // CarouselController lets code scroll the carousel: animateToItem(index).
+
   final CarouselController _controller = CarouselController(initialItem: 0);
   int _current = 0; // which item we last jumped to with the buttons
 
@@ -119,14 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      // The page can be taller than a small phone screen -> make it scrollable
-      // so nothing overflows.
+
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
-          // -------------------------------------------------------------
-          // HEADER
-          // -------------------------------------------------------------
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text('Explore Destinations',
@@ -140,9 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ?.copyWith(color: Theme.of(context).hintColor)),
           ),
 
-          // -------------------------------------------------------------
-          // 1) CarouselView  (FIXED item size)
-          // -------------------------------------------------------------
           const _SectionTitle(
             '1. CarouselView  (fixed itemExtent)',
             'Every item is exactly 280 px wide. Items at the edge shrink '
@@ -150,38 +139,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 'carousel settle neatly on an item.',
           ),
           SizedBox(
-            // A horizontal carousel needs a bounded HEIGHT. The width comes
-            // from the parent (full screen), the height we give here.
             height: 360,
             child: CarouselView(
-              // itemExtent = size of each item ALONG the scroll direction.
-              // Horizontal scroll -> this is the item's WIDTH.
               itemExtent: 280,
-
-              // Smallest size an item may shrink to when it slides off the
-              // edge. Default is 0 (shrinks to nothing). 150 keeps a peek.
               shrinkExtent: 150,
-
-              // true = after you lift your finger, it snaps to an item.
               itemSnapping: true,
-
-              // Space around EACH item.
               padding: const EdgeInsets.symmetric(horizontal: 6),
-
-              // Shape / elevation / background are applied by CarouselView
-              // itself (it wraps every child in a Material). That is why we
-              // do NOT wrap the content in a Card like before: it would be a
-              // card inside a card.
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
-
-              // onTap gives you the INDEX of the tapped item. No need to put
-              // a button inside each child just to detect taps.
               onTap: (index) => _showSelected(destinations[index]),
-
-              // children = the items. Each child is forced to the item size.
               children: [
                 for (final d in destinations) DestinationCard(destination: d),
               ],
@@ -189,10 +157,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
 
           const SizedBox(height: 28),
-
-          // -------------------------------------------------------------
-          // 2) CarouselView.weighted  (items have DIFFERENT sizes)
-          // -------------------------------------------------------------
           const _SectionTitle(
             '2. CarouselView.weighted  (flexWeights)',
             'Sizes are ratios, like Flex/Expanded. [1, 6, 1] means: left '
@@ -204,11 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 300,
             child: CarouselView.weighted(
               controller: _controller,
-              // Each number is the share of the screen width one slot gets.
-              // With [1, 6, 1] the middle slot gets 6/8 of the width.
               flexWeights: const [1, 6, 1],
-              // true = the biggest slot may use the full available width
-              // when the carousel is at the start/end.
               consumeMaxWeight: true,
               itemSnapping: true,
               padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -262,10 +222,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ?.copyWith(color: Theme.of(context).hintColor)),
           ),
           const SizedBox(height: 24),
-
-          // -------------------------------------------------------------
-          // CHEAT SHEET
-          // -------------------------------------------------------------
           const _CheatSheet(),
         ],
       ),
@@ -273,9 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// =============================================================================
-// ONE CAROUSEL ITEM
-// =============================================================================
+
 class DestinationCard extends StatelessWidget {
   final Destination destination;
   final bool compact; // smaller text for the weighted carousel
@@ -295,9 +249,6 @@ class DestinationCard extends StatelessWidget {
         Image.network(
           destination.image,
           fit: BoxFit.cover,
-
-          // Shown WHILE downloading (on a slow phone connection this is
-          // what you will see for a moment).
           loadingBuilder: (context, child, progress) {
             if (progress == null) return child; // finished -> show image
             return Container(
@@ -311,10 +262,6 @@ class DestinationCard extends StatelessWidget {
               ),
             );
           },
-
-          // Shown if the download FAILS (no internet, missing INTERNET
-          // permission, 404 ...). Without this you just see an empty card
-          // and have no clue why.
           errorBuilder: (context, error, stack) {
             debugPrint('Image failed: ${destination.image}\n$error');
             return Container(
